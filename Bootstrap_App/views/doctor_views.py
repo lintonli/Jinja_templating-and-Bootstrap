@@ -1,19 +1,18 @@
-from rest_framework import viewsets
-from django.shortcuts import render
-from DjangoBootstrap.wsgi import application
-from ..models import Doctors, Appointment
-from ..serializers import DoctorsSerializer, AppointmentSerializer
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import  render
+from ..models import  Appointment
 
-class DoctorViewSet(viewsets.ModelViewSet):
-    queryset = Doctors.objects.all()
-    serializer_class = DoctorsSerializer
-    @action(detail=True, methods=['GET'])
-    def docappointments(self, request):
-        doctor = self.get_object()
-        appointments = Appointment.objects.filter(doctor=doctor)
-        serializer = AppointmentSerializer(appointments, many=True)
-        return  Response(serializer.data)
-    def doctor_dashboard(request):
-        return render(request, 'doctor_dashboard.html')
+# def doctor_list(request):
+#     doctors = Doctors.objects.all()
+#     return render(request, 'index.html', {'doctors': doctors})
+@login_required(login_url='login')
+def doctor_dashboard(request):
+    # patients = Patients.objects.all()
+    # return render(request, 'doctor_dashboard.html', {'patients': patients})
+    if not hasattr(request.user, 'doctors'):
+        return render(request, 'login.html', {'message': 'You are not authorized to view this page.'})
+
+    doctor = request.user.doctors  # The logged-in doctor's profile
+    appointments = Appointment.objects.filter(doctor_name=doctor)  # Filter appointments for the logged-in doctor
+
+    return render(request, 'doctor_dashboard.html', {'appointments': appointments})

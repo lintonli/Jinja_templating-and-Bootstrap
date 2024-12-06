@@ -1,31 +1,30 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
-class CustomUser(AbstractUser):
-    USER_TYPE_CHOICES = (
-        ('doctor', 'Doctor'),
-        ('patient', 'Patient'),
-    )
-    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-
 class Doctors(models.Model):
-    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE)
-    description = models.TextField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to User model
+    name = models.CharField(max_length=50)
+    department = models.TextField()
+
     def __str__(self):
-        return  self.user.username
+        return self.name
+
 class Patients(models.Model):
-    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to User model
+    name = models.CharField(max_length=50)
     gender = models.CharField(max_length=100)
-    years = models.IntegerField()
+    age = models.IntegerField()
     profession = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=15)
+
     def __str__(self):
-        return self.user.username
+        return self.name
+
 class Appointment(models.Model):
-    doctor = models.ForeignKey(Doctors, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patients, on_delete=models.CASCADE)
-    date = models.DateField()
-    time = models.TimeField()
-    mobile=models.IntegerField()
+    doctor_name = models.ForeignKey(Doctors, on_delete=models.CASCADE)
+    patient_name = models.ForeignKey(Patients, on_delete=models.CASCADE)
+    appointment_date = models.DateField()
+    patient_mobile = models.IntegerField()
+
     def __str__(self):
-        return self.date
+        return f"Appointment with Dr.{self.doctor_name} on {self.appointment_date}"

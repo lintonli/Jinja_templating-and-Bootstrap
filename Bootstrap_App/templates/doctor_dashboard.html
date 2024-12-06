@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+    <h1>My Appointments</h1>
+    <ul>
+        {% for appointment in appointments %}
+            <li>
+                <strong>Patient:</strong> {{ appointment.patient_name }}<br>
+                <strong>Date:</strong> {{ appointment.date }}<br>
+                <strong>Time:</strong> {{ appointment.time }}<br>
+                <strong>Mobile:</strong> {{ appointment.mobile }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
